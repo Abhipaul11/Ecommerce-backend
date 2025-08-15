@@ -25,7 +25,9 @@ app.get("/", (req, res) => {
 });
 
 dbConnect();
-
+app.get("/", (req, res) => {
+    res.send("  Server is running successfully!");
+});
 app.use("/api/v1", authrouter, productrouter, addorderrouter, cartrouter);
 app.use("/api/v1", reviewAndquery_router, orderhistoryrouter);
 app.use("/api/v1", statusChangerouter, wishlistrouter);
