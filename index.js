@@ -8,7 +8,7 @@ const fileUpload = require("express-fileupload");
 
 // Allow specific origins
 const allowedOrigins = [
-    "https://neon-kitsune-97ec35.netlify.app",
+    "https://neon-kitsune-97ec35.netlify.app/api/v1",
 ];
 
 app.use(fileUpload());
