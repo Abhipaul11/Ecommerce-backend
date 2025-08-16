@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const dbConnect = require("../config/db.config");
+const dbConnect = require("./config/db.config");
 const dotenv = require("dotenv");
 dotenv.config();
 const fileUpload = require("express-fileupload");
