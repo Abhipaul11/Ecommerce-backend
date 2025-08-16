@@ -1,5 +1,5 @@
 const Product = require("../../models/productSchema.models")
-const SERVER_ENDPOINT = process.env.SERVER_ENDPOINT
+const SERVER_ENDPOINT = process.env.SERVER_ENDPOINT_VERCEL
 
 const getAllproduct = async (req, res) => {
     try {
