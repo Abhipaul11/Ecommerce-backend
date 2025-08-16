@@ -1,15 +1,14 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const dbConnect = require("./config/db.config");
+const dbConnect = require("./config/db.config.js");
 const dotenv = require("dotenv");
 dotenv.config();
 const fileUpload = require("express-fileupload");
 
 // Allow specific origins
 const allowedOrigins = [
-    "https://neon-kitsune-97ec35.netlify.app", // Your Netlify site
-    "http://localhost:5173" // Local dev (Vite)
+    "https://neon-kitsune-97ec35.netlify.app",
 ];
 
 app.use(fileUpload());
