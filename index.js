@@ -6,31 +6,22 @@ const dotenv = require("dotenv");
 dotenv.config();
 const fileUpload = require("express-fileupload");
 
-// Allow specific origins
-const allowedOrigins = [
-    "https://neon-kitsune-97ec35.netlify.app/api/v1",
-];
-
+// Middleware
 app.use(fileUpload());
 app.use("/uploads", express.static("uploads"));
 app.use(express.json());
 
-// CORS middleware
+// ✅ Allow all origins (for testing)
 app.use(cors({
-    origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
+    origin: "*",
     credentials: true,
     optionsSuccessStatus: 200
 }));
 
-// Preflight requests for all routes
+// ✅ Preflight requests
 app.options("*", cors());
 
+// Routers
 const authrouter = require("./routes/authRoute.routes");
 const productrouter = require("./routes/product.routes");
 const addorderrouter = require("./routes/addOrder.route");
@@ -40,17 +31,21 @@ const orderhistoryrouter = require("./routes/orderhistory.routes");
 const statusChangerouter = require("./routes/userstatus.route");
 const wishlistrouter = require("./routes/wishlist.route");
 
+// Test route
 app.get("/", (req, res) => {
     res.send("Server is running successfully!");
 });
 
+// DB connect
 dbConnect();
 
+// Use routers
 app.use("/api/v1", authrouter, productrouter, addorderrouter, cartrouter);
 app.use("/api/v1", reviewAndquery_router, orderhistoryrouter);
 app.use("/api/v1", statusChangerouter, wishlistrouter);
 
 module.exports = app;
+
 
 
 
