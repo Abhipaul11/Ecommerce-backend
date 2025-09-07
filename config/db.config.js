@@ -1,14 +1,3 @@
-// const mongoose = require("mongoose")
-
-// const dbConnect = () => {
-//     mongoose.connect(process.env., )
-//         .then((e) => console.log("connected to ecommerce db"))
-//         .catch(err => {
-//             console.error('Error while connecting', err);
-//         })
-// }
-
-// module.exports = dbConnect
 
 
 const mongoose = require("mongoose");

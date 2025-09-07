@@ -1,60 +1,60 @@
-const Product = require("../../models/productSchema.models");
-const Category = require("../../models/category.models");
-const cloudinary = require("../../config/cloudinary");
+// // const Product = require("../../models/productSchema.models");
+// // const Category = require("../../models/category.models");
+// // const cloudinary = require("../../config/cloudinary");
 
-const addProduct = async (req, res) => {
-    console.log("Incoming request:", req.body);
+// // const addProduct = async (req, res) => {
+// //   console.log("Incoming request:", req.body);
 
-    try {
-        if (!req.user || req.user.role === "user") {
-            return res.status(403).json({ msg: "You are not authorized to add product" });
-        }
+// //   try {
+// //     if (!req.user || req.user.role === "user") {
+// //       return res.status(403).json({ msg: "You are not authorized to add product" });
+// //     }
 
-        if (!req.files || !req.files.file1) {
-            return res.status(400).json({ msg: "Image file is required" });
-        }
+// //     if (!req.files || !req.files.file1) {
+// //       return res.status(400).json({ msg: "Image file is required" });
+// //     }
 
-        const { name, category, price } = req.body;
-        let startup_image = req.files.file1;
+// //     const { name, category, price } = req.body;
+// //     let startup_image = req.files.file1;
 
-        console.log("Original file size:", (startup_image.size / 1024).toFixed(2), "KB");
+// //     console.log("Original file size:", (startup_image.size / 1024).toFixed(2), "KB");
 
-        // Upload directly to Cloudinary
-        const uploadResult = await cloudinary.uploader.upload_stream(
-            {
-                folder: "products", // optional folder in cloudinary
-                resource_type: "image"
-            },
-            async (error, result) => {
-                if (error) {
-                    console.error("Cloudinary upload failed:", error);
-                    return res.status(500).json({ msg: "Upload to cloudinary failed" });
-                }
+// //     // Upload directly to Cloudinary
+// //     const uploadResult = await cloudinary.uploader.upload_stream(
+// //       {
+// //         folder: "products", // optional folder in cloudinary
+// //         resource_type: "image"
+// //       },
+// //       async (error, result) => {
+// //         if (error) {
+// //           console.error("Cloudinary upload failed:", error);
+// //           return res.status(500).json({ msg: "Upload to cloudinary failed" });
+// //         }
 
-                // Create product with Cloudinary URL
-                const product = await Product.create({
-                    name,
-                    category,
-                    price,
-                    image: result.secure_url, // ✅ store cloudinary URL instead of local path
-                });
+// //         // Create product with Cloudinary URL
+// //         const product = await Product.create({
+// //           name,
+// //           category,
+// //           price,
+// //           image: result.secure_url, // ✅ store cloudinary URL instead of local path
+// //         });
 
-                return res.status(201).json({ msg: "Product created", product });
-            }
-        );
+// //         return res.status(201).json({ msg: "Product created", product });
+// //       }
+// //     );
 
-        // Pipe buffer to cloudinary stream
-        require("streamifier").createReadStream(startup_image.data).pipe(uploadResult);
+// //     // Pipe buffer to cloudinary stream
+// //     require("streamifier").createReadStream(startup_image.data).pipe(uploadResult);
 
-    } catch (error) {
-        console.error("Product failed to add", error);
-        if (!res.headersSent) {
-            return res.status(500).json({ msg: "Server error", error: error.message });
-        }
-    }
-};
+// //   } catch (error) {
+// //     console.error("Product failed to add", error);
+// //     if (!res.headersSent) {
+// //       return res.status(500).json({ msg: "Server error", error: error.message });
+// //     }
+// //   }
+// // };
 
-module.exports = addProduct;
+// // module.exports = addProduct;
 
 
 
@@ -169,8 +169,120 @@ module.exports = addProduct;
 
 // // module.exports = addProduct
 
+
+
+
+
+// new cygnus
+
+// const express = require("express");
+// const Product = require("../../models/productSchema.models");
+// const Category = require("../../models/category.models");
+
+// const path = require("path");
+// let uploads = path.join(process.cwd(), "/uploads/");
+
+// const addProduct = async (req, res) => {
+//   console.log(req.user);
+//   try {
+//     if (req.user.role == "user") {
+//       return res
+//         .status(201)
+//         .json({ msg: "You are not authorized to add product" });
+//     }
+//     const { name, category, price } = req.body;
+
+//     var startup_image = req.files.file1;
+//     let filename = startup_image.name;
+
+//     startup_image.mv(uploads + filename, function (err) {
+//       if (err) {
+//         console.log(err);
+//       } else {
+//         console.log("uploaded", uploads);
+//       }
+//     });
+
+//     const product = await Product.create({
+//       name,
+//       category,
+//       price,
+//       image: filename,
+//     });
+
+//     if (!product) {
+//       res.status(401).json({ msg: "Product not added" });
+//     }
+
+//     res.status(201).json({ msg: "Product created", product });
+//   } catch (error) {
+//     console.log("Product failed to add mderor", error);
+//     res.status(400).json({ msg: error });
+//   }
+// };
+
+// module.exports = addProduct;
+
 // // // "name" :"oppo", "category":"phone","price":12000  for hopscotch
 
+const express = require("express");
+const Product = require("../../models/productSchema.models");
+const Category = require("../../models/category.models");
+const path = require("path");
+const fs = require("fs");
+const cloudinary = require("../../config/cloudinary"); // import config
 
+let uploads = path.join(process.cwd(), "/uploads/");
+
+const addProduct = async (req, res) => {
+    try {
+        if (req.user.role === "user") {
+            return res
+                .status(403)
+                .json({ msg: "You are not authorized to add product" });
+        }
+
+        const { name, category, price } = req.body;
+
+        // Check if file exists
+        if (!req.files || !req.files.file1) {
+            return res.status(400).json({ msg: "No image uploaded" });
+        }
+
+        const startup_image = req.files.file1;
+        let filename = Date.now() + "_" + startup_image.name;
+        let filepath = uploads + filename;
+
+        // Save file locally first
+        await startup_image.mv(filepath);
+
+        // Upload to Cloudinary
+        const cloudinaryResult = await cloudinary.uploader.upload(filepath, {
+            folder: "products",
+        });
+
+        // Delete local file after upload
+        fs.unlinkSync(filepath);
+
+        // Save product with Cloudinary URL
+        const product = await Product.create({
+            name,
+            category,
+            price,
+            image: cloudinaryResult.secure_url, // store cloudinary url
+        });
+
+        if (!product) {
+            return res.status(500).json({ msg: "Product not added" });
+        }
+
+        res.status(201).json({ msg: "Product created successfully", product });
+    } catch (error) {
+        console.error("Product failed to add:", error);
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+module.exports = addProduct;
 
 
