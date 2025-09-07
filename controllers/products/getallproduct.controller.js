@@ -45,7 +45,7 @@ const getAllproduct = async (req, res) => {
         const allProducts = getproducts.map((product) => {
 
             return {
-                ...product.toObject(), image: `${SERVER_ENDPOINT}uploads/${product.image}`
+                ...product.toObject(),
             }
         })
 
